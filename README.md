@@ -1,21 +1,6 @@
 # BoatServer
 
-**TODO: Add description**
-
-## Installation
-
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `boat_server` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:boat_server, "~> 0.1.0"}
-  ]
-end
-```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/boat_server](https://hexdocs.pm/boat_server).
+This is currently a first draft and super rough around the edges. It imports
+data from a local SignalK server and exposes the data as a Prometheus endpoint.
+In my setup that gets picked up by Grafana to draw pretty pictures.
 
