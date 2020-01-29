@@ -37,7 +37,14 @@ defmodule BoatServer.Prometheus do
   defp convert(:ms_to_kn, value) do
     value * 1.9438444924406
   end
+
+  # convert rad to degrees and make the heading 0 deg and port -180 to 0 and
+  # starbord 180 - 0
   defp convert(:rad_to_degree, value) do
-    value * (180/:math.pi())
+    deg = value * (180/:math.pi())
+    case deg >= 180 do
+      true -> deg - 360
+      false -> deg
+    end
   end
 end
