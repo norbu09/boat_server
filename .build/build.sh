@@ -33,6 +33,7 @@ ETC=${STAGING}/usr/local/etc
 WWW=${STAGING}/usr/local/www/${NAME}
 PKG=${BASE}/package
 MANIFEST=${PKG}/manifest.ucl
+FBSDPKG=${ROOT}/freebsd_pkg
 
 mkdir -p -m0750 ${PKG} ${DEST} ${ETC}/${NAME} ${WWW}/static
 
@@ -96,5 +97,5 @@ UCL
 pkg create --verbose \
     --root-dir ${STAGING} \
     --manifest ${MANIFEST} \
-    --out-dir ${BUILD}
-cp ${MANIFEST} ${BUILD}/
+    --out-dir ${FBSDPKG}
+cp ${MANIFEST} ${FBSDPKG}/
