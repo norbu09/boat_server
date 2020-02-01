@@ -1,0 +1,106 @@
+#!/bin/sh
+#
+# PROVIDE: boat_server
+# REQUIRE: networking
+# KEYWORD:
+
+. /etc/rc.subr
+
+name="boat_server"
+rcvar="${name}_enable"
+install_dir="/usr/local/lib/${name}"
+version=$(cat ${install_dir}/releases/start_erl.data | cut -d' ' -f2)
+
+extra_commands="kill status"
+kill_cmd="${name}_kill"
+start_cmd="${name}_start"
+stop_cmd="${name}_stop"
+status_cmd="${name}_status"
+
+load_rc_config $name
+: ${boat_server_enable:="no"}
+: ${boat_server_verbose:=""}
+: ${boat_server_port:="4000"}
+: ${boat_server_user:=${name}}
+: ${boat_server_node_name:="${name}@127.0.0.1"}
+: ${boat_server_cookie:="${name}"}
+: ${boat_server_config_dir:="/usr/local/etc/${name}"}
+: ${boat_server_run_dir:="/var/run/${name}"}
+: ${boat_server_log_dir:="/var/log/${name}"}
+: ${boat_server_command="${install_dir}/bin/${name}"}
+
+boat_server_run()
+{
+umask 027
+ /usr/bin/env \
+    LANG=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8 \
+    HOME="${boat_server_run_dir}" \
+    RELEASE_MUTABLE_DIR="${boat_server_run_dir}" \
+    RELEASE_CONFIG_DIR="${boat_server_config_dir}" \
+    RELEASE_ROOT_DIR="/usr/local/lib/${name}" \
+    START_ERL_DATA="${boat_server_run_dir}/start_erl.data" \
+    VMARGS_PATH="${boat_server_config_dir}/vm.args" \
+    SYS_CONFIG_PATH="${boat_server_config_dir}/sys.config" \
+    RELX_REPLACE_OS_VARS=false \
+    RELEASE_LOG_DIR="${boat_server_log_dir}" \
+    RUNNER_LOG_DIR="${boat_server_log_dir}" \
+    VERBOSE="${boat_server_verbose}" \
+    DEBUG_BOOT="${boat_server_verbose}" \
+    NODE_NAME="${boat_server_node_name}" \
+    COOKIE="${boat_server_cookie}" \
+    PORT="${boat_server_port}" \
+    PATH="/usr/local/bin:$PATH" \
+  su -m "${boat_server_user}" -c "${boat_server_command} $1"
+}
+
+# On each run, we ensure we are starting from a clean slate.
+# At shutdown we kill any stray processes just in case.
+# Logs are stored using syslog but there are some minimal
+# startup and heart logs from the runtime that are worth
+# keeping in case of debugging BEAM crashes.
+
+boat_server_stop()
+{
+  boat_server_run stop
+  boat_server_kill
+}
+
+boat_server_start()
+{
+  boat_server_kill
+  boat_server_setup
+  boat_server_run start
+}
+
+boat_server_kill()
+{
+  # kill only the process listed in the pidfile and only if the user matches
+  pkill -9 -U ${boat_server_user} -f ${name}
+  boat_server_cleanup
+}
+
+boat_server_cleanup()
+{
+  rm -rf "${boat_server_run_dir}/*"
+}
+
+boat_server_setup()
+{
+  install -d -m 0750 -o ${boat_server_user} -g ${boat_server_user} ${boat_server_run_dir}
+  install -d -m 0750 -o ${boat_server_user} -g ${boat_server_user} ${boat_server_log_dir}
+}
+
+boat_server_status()
+{
+  ping_result=`boat_server_run ping`
+  echo "${ping_result}"
+  case "${ping_result}" in
+    *pong*)
+      echo "${name} is running."
+      ;;
+  esac
+}
+
+load_rc_config $name
+run_rc_command "$1"

@@ -25,7 +25,8 @@ defmodule BoatServer.MixProject do
       {:jason, ">= 1.1.1"},
       {:prometheus_ex, ">= 3.0.0"},
       {:plug_cowboy, "~> 2.1"},
-      {:prometheus_plugs, "~> 1.1"}
+      {:prometheus_plugs, "~> 1.1"},
+      {:distillery, "~> 2.1"}
     ]
   end
 end
