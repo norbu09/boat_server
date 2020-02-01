@@ -8,7 +8,6 @@ prefix:       /usr/local
 licenselogic: single
 licenses:     [MIT]
 categories:   [boat_server]
-deps:         {erlang: {origin: lang/erlang, version: "21"}}
 flatsize:     0
 desc:         <<EOD
 This is Lsp

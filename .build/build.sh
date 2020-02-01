@@ -41,6 +41,8 @@ mkdir -p -m0750 ${PKG} ${DEST} ${ETC}/${NAME} ${WWW}/static
 umask 027
 # get template manifest and other static files
 cp -av ${ROOT}/.build/templates/rc.d ${ETC}/
+cp -av ${ROOT}/.build/templates/sys.config ${ETC}/${NAME}/
+cp -av ${ROOT}/.build/templates/vm.args ${ETC}/${NAME}/
 cp -av ${ROOT}/.build/templates/manifest.ucl ${MANIFEST}
 
 # unpack the mix release itself excluding files with tokens
